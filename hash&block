@@ -1,0 +1,98 @@
+# importing the required libraries
+import hashlib
+
+
+
+class Block:
+    def __init__(self, data, prev_hash=0):
+        self._data = data
+        self._prev_hash = prev_hash
+        self._hash = self.gen_hash(prev_hash)
+        self._next = None
+        print("Transaction added.  New hash is:  ", self._hash)
+
+
+
+
+    def gen_hash(self, prev_hash):
+        #SHA-256 is a hashing algorithm that
+        # generates an almost-unique 256-bit signature that represents
+        # some piece of text
+        h = hashlib.sha256()
+        #the input to the SHA-256 algorithm
+        #will be a concatenated string
+        #consisting of 5 block attributes
+        #the data, & previous hash
+        h.update(
+        str(self._data).encode('utf-8') +
+        str(prev_hash).encode('utf-8'))
+        #returns a hexademical string
+        return h.hexdigest()
+
+
+    def add_block(self, data, prev_hash=0):
+        my_hash = prev_hash
+        node = self
+        if node._next is None:
+            my_hash = self._hash
+
+
+        while node._next is not None:
+            node = node._next
+            my_hash = node._hash
+
+        new_block = Block(data, my_hash)
+
+        node._next = new_block
+
+
+
+
+    def replay(self, prev_hash=0): #verify
+        verify = True
+        node = self
+        print("Replaying Blockchain: ")
+        previous = prev_hash
+        while (node._next is not None) and verify:
+            test_hash = node.gen_hash(previous)
+            if test_hash != node._hash:
+                verify = False
+            else:
+                print(node._data)
+            previous = node._hash
+            node = node._next
+
+
+        if verify:
+            print("Blockchain Verified. End of Transactions.")
+            print("Final hash is: ", node._hash)
+        else:
+            print("Blockchain is Corrupted!!")
+
+
+
+
+
+def main():
+
+    new_chain = Block("Starting Balance Eric = $1000")
+    new_chain.add_block("Eric Pays KiKi $10 for providing a great idea")
+    new_chain.add_block("Eric Pays the cat $50 for ending the noise")
+    new_chain.add_block("The cat pays Pet Food Express $20 for catnip")
+    print()
+    new_chain.replay()
+    print()
+
+    # Cat tried to hack the chain
+    fraud = "Eric Pays the cat $500 for ending the noise"
+    new_chain._next._next._data = fraud
+    new_chain.replay()
+
+main()
+
+
+
+
+
+
+"""
