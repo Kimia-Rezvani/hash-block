@@ -76,7 +76,7 @@ class Block:
 def main():
 
     new_chain = Block("Starting Balance Eric = $1000")
-    new_chain.add_block("Eric Pays KiKi $10 for providing a great idea")
+    new_chain.add_block("Eric Pays KiKi $100000000 for providing a great idea")
     new_chain.add_block("Eric Pays the cat $50 for ending the noise")
     new_chain.add_block("The cat pays Pet Food Express $20 for catnip")
     print()
